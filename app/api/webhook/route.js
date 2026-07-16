@@ -27,3 +27,22 @@ export async function POST(request) {
     return NextResponse.json({ success: false, error: message }, { status });
   }
 }
+
+// Handle GET requests (in case someone visits the webhook URL in their browser)
+export async function GET() {
+  return NextResponse.json({ 
+    message: "Webhook endpoint is active! Please configure Freshsales to send a POST request with the Deal ID." 
+  }, { status: 200 });
+}
+
+// Handle OPTIONS requests (for CORS / Preflight checks)
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
+}

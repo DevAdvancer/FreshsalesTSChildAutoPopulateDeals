@@ -1,0 +1,183 @@
+@import "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap";
+/* [project]/app/globals.css [app-client] (css) */
+:root {
+  --bg: #0f172a;
+  --card-bg: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --color-info: #3b82f6;
+  --color-success: #10b981;
+  --color-warn: #f59e0b;
+  --color-error: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+  font-family: Inter, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+header {
+  border-bottom: 1px solid var(--border);
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  display: flex;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.refresh-btn {
+  background-color: var(--color-info);
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  border-radius: 6px;
+  padding: .5rem 1rem;
+  font-weight: 600;
+  transition: background-color .2s, transform .1s;
+}
+
+.refresh-btn:hover {
+  background-color: #2563eb;
+}
+
+.refresh-btn:active {
+  transform: scale(.95);
+}
+
+.log-list {
+  flex-direction: column;
+  gap: 1rem;
+  display: flex;
+}
+
+.log-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1rem 1.5rem;
+  transition: transform .2s, border-color .2s;
+  animation: .4s ease-out fadeIn;
+  display: flex;
+  box-shadow: 0 4px 6px -1px #0000001a;
+}
+
+.log-card:hover {
+  border-color: #475569;
+  transform: translateY(-2px);
+}
+
+.log-header {
+  justify-content: space-between;
+  align-items: center;
+  font-size: .875rem;
+  display: flex;
+}
+
+.log-status {
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  border-radius: 999px;
+  margin-right: .5rem;
+  padding: .25rem .75rem;
+  font-size: .75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-INFO {
+  color: var(--color-info);
+  background: #3b82f61a;
+  border: 1px solid #3b82f633;
+}
+
+.status-SUCCESS {
+  color: var(--color-success);
+  background: #10b9811a;
+  border: 1px solid #10b98133;
+}
+
+.status-WARN {
+  color: var(--color-warn);
+  background: #f59e0b1a;
+  border: 1px solid #f59e0b33;
+}
+
+.status-ERROR {
+  color: var(--color-error);
+  background: #ef44441a;
+  border: 1px solid #ef444433;
+}
+
+.log-time {
+  color: var(--text-muted);
+}
+
+.log-message {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.log-deal {
+  color: var(--text-muted);
+  background: #0000004d;
+  border-radius: 4px;
+  padding: .2rem .4rem;
+  font-family: monospace;
+}
+
+.log-payload {
+  color: #a5b4fc;
+  background-color: #0006;
+  border-radius: 6px;
+  margin-top: .5rem;
+  padding: 1rem;
+  font-family: monospace;
+  font-size: .85rem;
+  overflow-x: auto;
+}
+
+.loading, .error {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 3rem;
+}
+
+.error {
+  color: var(--color-error);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*# sourceMappingURL=app_globals_0yg4wg8.css.map*/

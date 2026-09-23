@@ -22,6 +22,7 @@ This project has been upgraded to a **Next.js** application. It serves two main 
 - `GET /` - The React Dashboard (Logs)
 - `POST /api/webhook` - The endpoint to configure in Freshsales.
 - The webhook returns HTTP 202 after accepting a Deal ID. The sync continues after the response; check the dashboard for its final `SUCCESS` or `ERROR` log.
+- When a mapped field is blank on the selected Tradeshow, the sync clears its previous value on the deal.
 - `GET /api/test` - A test endpoint to manually trigger a sync using `TEST_DEAL_ID` from your `.env`.
 
 ## Deployment

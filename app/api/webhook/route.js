@@ -1,30 +1,34 @@
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { processDealSync } from '../../../lib/sync';
 import { saveLog } from '../../../lib/logger';
-import connectDB from '../../../lib/db';
+
+export const maxDuration = 60;
 
 export async function POST(request) {
+  let body;
   try {
-    await connectDB();
-    const body = await request.json();
-    
+    body = await request.json();
     const dealId = body?.deal?.id || body?.id || body?.deal_id;
     
     if (!dealId) {
-      await saveLog({ status: 'ERROR', message: 'Webhook triggered but no Deal ID found in payload.', payload: body });
+      after(() => saveLog({ status: 'ERROR', message: 'Webhook triggered but no Deal ID found in payload.', payload: body }));
       return NextResponse.json({ success: false, error: 'Deal ID not found in webhook payload.' }, { status: 400 });
     }
 
-    await saveLog({ dealId, status: 'INFO', message: 'Webhook triggered.', payload: body });
+    after(async () => {
+      try {
+        await saveLog({ dealId, status: 'INFO', message: 'Webhook triggered.', payload: body });
+        await processDealSync(dealId);
+      } catch (error) {
+        const message = error.message || 'Internal Server Error';
+        await saveLog({ dealId, status: 'ERROR', message: `Webhook sync error: ${message}`, payload: error.response?.data || null });
+      }
+    });
 
-    const result = await processDealSync(dealId);
-    return NextResponse.json(result, { status: 200 });
-    
+    return NextResponse.json({ accepted: true, dealId }, { status: 202 });
   } catch (error) {
-    const status = error.status || 500;
-    const message = error.message || 'Internal Server Error';
-    await saveLog({ status: 'ERROR', message: `Webhook error: ${message}` });
-    return NextResponse.json({ success: false, error: message }, { status });
+    after(() => saveLog({ status: 'ERROR', message: `Webhook error: ${error.message || 'Internal Server Error'}` }));
+    return NextResponse.json({ success: false, error: 'Invalid webhook payload.' }, { status: 400 });
   }
 }
 

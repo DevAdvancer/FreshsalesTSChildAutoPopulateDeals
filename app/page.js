@@ -1,29 +1,44 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Dashboard() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const activeRequest = useRef(null);
 
   const fetchLogs = async () => {
+    activeRequest.current?.abort();
+    const controller = new AbortController();
+    activeRequest.current = controller;
     setLoading(true);
     setError(null);
+    setLogs([]);
     try {
-      const res = await fetch('/api/logs');
-      if (!res.ok) throw new Error('Failed to fetch logs');
-      const data = await res.json();
-      setLogs(data);
+      let cursor = null;
+      do {
+        const url = cursor ? `/api/logs?cursor=${encodeURIComponent(cursor)}` : '/api/logs';
+        const res = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+        if (!res.ok) throw new Error('Failed to fetch logs');
+        const page = await res.json();
+        if (controller.signal.aborted) break;
+        setLogs(previous => [...previous, ...page]);
+        cursor = res.headers.get('X-Next-Cursor') || null;
+      } while (cursor && !controller.signal.aborted);
     } catch (err) {
-      setError(err.message);
+      if (err.name !== 'AbortError') setError(err.message);
     } finally {
-      setLoading(false);
+      if (activeRequest.current === controller) {
+        setLoading(false);
+        activeRequest.current = null;
+      }
     }
   };
 
   useEffect(() => {
     fetchLogs();
+    return () => activeRequest.current?.abort();
   }, []);
 
   return (
@@ -34,6 +49,8 @@ export default function Dashboard() {
           {loading ? 'Refreshing...' : 'Refresh Logs'}
         </button>
       </header>
+
+      <div className="loading">{loading ? `Loading all logs… ${logs.length} loaded` : `${logs.length} logs`}</div>
 
       <div className="log-list">
         {loading && logs.length === 0 && <div className="loading">Loading logs from database...</div>}
